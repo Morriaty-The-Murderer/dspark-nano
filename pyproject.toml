@@ -1,0 +1,25 @@
+[project]
+name = "dspark-nano"
+version = "0.1.0"
+description = "A minimal, readable DSpark-style speculative decoding demo."
+requires-python = ">=3.10"
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "DSpark Nano contributors" },
+]
+keywords = ["speculative-decoding", "dspark", "llm-inference", "teaching"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/deepseek-ai/DeepSpec"
+DeepSpec = "https://github.com/deepseek-ai/DeepSpec"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
