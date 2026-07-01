@@ -1,0 +1,42 @@
+flowchart TB
+    subgraph Concepts["读论文时看到的概念"]
+        P["Parallel drafting<br/>一次猜多个 token"]
+        S["Suffix decay<br/>越靠后的 token 越容易错"]
+        V["Verification<br/>目标模型校验候选前缀"]
+        W["Waste<br/>校验过但没被接受的 token"]
+        C["Correction<br/>猜错后补上正确 token"]
+    end
+
+    subgraph Code["在代码里对应哪里"]
+        P1["drafter.py<br/>ToyProfileDrafter"]
+        S1["drafter.py<br/>conditional_acceptance"]
+        V1["verifier.py<br/>verify_prefix"]
+        W1["trace.py<br/>verification_waste"]
+        C1["engine.py<br/>corrected_target_tokens"]
+    end
+
+    subgraph Observe["运行时看什么"]
+        O1["python -m dspark_nano.cli trace<br/>看每轮 token 状态"]
+        O2["python -m dspark_nano.cli benchmark<br/>比较 parallel / dspark"]
+        O3["tests/test_dspark_nano.py<br/>看行为边界"]
+    end
+
+    P --> P1 --> O1
+    S --> S1 --> O2
+    V --> V1 --> O1
+    W --> W1 --> O2
+    C --> C1 --> O3
+
+    O1 -. "输出列<br/>draft / target / conf / survival / status" .-> O1a["trace table"]
+    O2 -. "输出列<br/>rounds / draft / corrected / verified / waste" .-> O2a["benchmark table"]
+    O3 -. "关键断言<br/>mismatch / fallback / load profile" .-> O3a["tests"]
+
+    classDef concept fill:#eef2ff,stroke:#4f46e5,color:#111827
+    classDef code fill:#f0fdf4,stroke:#16a34a,color:#111827
+    classDef observe fill:#fff7ed,stroke:#f97316,color:#111827
+    classDef note fill:#f8fafc,stroke:#94a3b8,color:#334155
+
+    class P,S,V,W,C concept
+    class P1,S1,V1,W1,C1 code
+    class O1,O2,O3 observe
+    class O1a,O2a,O3a note

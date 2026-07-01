@@ -1,0 +1,26 @@
+flowchart LR
+    A["输入 prompt<br/>用户给一段文本"] --> B["编码 token<br/>target.encode"]
+    B --> C["草稿生成<br/>drafter.py<br/>ToyProfileDrafter.draft"]
+    C --> D["前缀调度<br/>scheduler.py<br/>schedule_prefix"]
+    D --> E["目标校验<br/>verifier.py<br/>verify_prefix"]
+    E --> F{"最长前缀<br/>是否全部命中"}
+    F -- "是" --> G["接受 draft token<br/>accepted_draft_tokens"]
+    F -- "否" --> H["追加修正 token<br/>corrected_target_tokens"]
+    G --> I["更新输出序列<br/>engine.py<br/>generate"]
+    H --> I
+    I --> J["记录 trace<br/>trace.py<br/>StepTrace.table"]
+    J --> K["汇总 metrics<br/>rounds / draft / corrected / verified / waste"]
+
+    C -. "mode = parallel<br/>后缀衰减更快" .-> C1["parallel profile"]
+    C -. "mode = dspark<br/>后缀衰减更慢" .-> C2["dspark profile"]
+    D -. "load = low / medium / high<br/>决定验证多长前缀" .-> D1["load-aware scheduling"]
+
+    classDef source fill:#eef6ff,stroke:#2563eb,color:#0f172a
+    classDef decision fill:#fff7ed,stroke:#ea580c,color:#0f172a
+    classDef output fill:#ecfdf5,stroke:#059669,color:#0f172a
+    classDef note fill:#f8fafc,stroke:#94a3b8,color:#334155
+
+    class A,B,C,D,E source
+    class F decision
+    class G,H,I,J,K output
+    class C1,C2,D1 note
